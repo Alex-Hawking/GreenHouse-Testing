@@ -7,15 +7,18 @@ Currently in *pre-alpha*, everything is subject to change and become (*hopefully
 This is an application for browser-based front-end QA testing. 
 GreenHouse offers the abilitiy to **compile** Gherkin code into Playwright/Jest **test files** (`test.js`), which can then be run from anywhere using Jest.
 
+> Gherkin is a domain-specific language that enables the definition of business behavior without the need to go into the details of implementation. It's primarily used for Behavior-Driven Development (BDD), a software development approach that encourages collaboration between developers, QA, non-technical participants, and business stakeholders. (Thanks ChatGPT)
+
 ## How does it work? (Docs)
 
-There are 2 main parts to implementing GreenHouse
+There are 2 main parts to GreenHouse.
 
 ### Writing Tests
 
-Tests are broken into 2 parts *features* and *steps*.
+Tests are broken into 2 parts *features* and *steps*. <br>
 
-**Features**
+**Features** <br>
+
 Features are Gherkin script like below:
 ```
 Feature: Example test
@@ -26,9 +29,10 @@ Feature: Example test
 
 Tests are saved as `.feature` files within the `/features/` directory of your `BDD` directory (more on this later).
 
-Tests MUST have `Feature: (basic explainer of test)` 
+Tests MUST have `Feature: (basic explainer of test)`  <br>
 
-**Steps**
+**Steps** <br>
+
 Steps are the typescript code definitions for each action within the Gherkin script. See the below example:
 ```typescript
 import Step from '@Steps/Template'
@@ -50,8 +54,8 @@ const sayHello = new Step(
 export default sayHello
 ```
 The Step class constructor requires 2 arguments:
-    - Sentences to match, created using the pre-defined keywords
-    - A handler function, essentially saying what to do (all handler functions require the Playwright page object as an argument to allow the tests to interact with the browser page)
+- Sentences to match, created using the pre-defined keywords
+- A handler function, essentially saying what to do (all handler functions require the Playwright page object as an argument to allow the tests to interact with the browser page)
 
 Currently the following matching keywords can be used:
 ```
