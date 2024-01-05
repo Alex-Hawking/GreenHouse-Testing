@@ -7,7 +7,7 @@ Currently in *pre-alpha*, everything is subject to change and become (*hopefully
 This is an application for browser-based front-end QA testing. 
 GreenHouse offers the abilitiy to **compile** Gherkin code into Playwright/Jest **test files** (`test.js`), which can then be run from anywhere using Jest.
 
-> Gherkin is a domain-specific language that enables the definition of business behavior without the need to go into the details of implementation. It's primarily used for Behavior-Driven Development (BDD), a software development approach that encourages collaboration between developers, QA, non-technical participants, and business stakeholders. (Thanks ChatGPT)
+> Gherkin is a domain-specific language that enables the definition of business behavior without the need to go into the details of implementation. It's primarily used for Behavior-Driven Development (BDD), a software development approach that encourages collaboration between developers, QA, non-technical participants, and business stakeholders. (Thanks ChatGPT) [more](https://cucumber.io/docs/gherkin/reference/)
 
 ## How does it work? (Docs)
 
@@ -54,8 +54,8 @@ const sayHello = new Step(
 export default sayHello
 ```
 The Step class constructor requires 2 arguments:
-- Sentences to match, created using the pre-defined keywords
-- A handler function, essentially saying what to do (all handler functions require the Playwright page object as an argument to allow the tests to interact with the browser page)
+- *Sentences to match*, created using the pre-defined keywords
+- *A handler function*, essentially saying what to do (all handler functions require the Playwright page object as an argument to allow the tests to interact with the browser page)
 
 Currently the following matching keywords can be used:
 ```
@@ -105,7 +105,7 @@ Example_BDD_Folder
     ├── hello.ts
     ├── open.ts
 ```
-**Note:** The file picklereqs.d.ts is also in the BDD folder, this simply contains module declarations `declare module '@Steps/Template' declare module '@Steps/Keywords'` and is optional, I just have it to silence text-editor warnings.
+**Note:** The file `picklereqs.d.ts` is also in the BDD folder, this simply contains module declarations `declare module '@Steps/Template' declare module '@Steps/Keywords'` and is optional, I just have it to silence text-editor warnings.
 
 ### Running Tests
 
@@ -125,10 +125,10 @@ Adding a bunch of default step definitions for basic tasks, as well as cleaning 
 
 TODO:
 
-[] save to variables
-[] use variables for selectors
-[] cleanup compilation
-[] config json
-[] default definitions
-[] wiki
-[] save logs
+- [ ] save to variables
+- [ ] use variables for selectors
+- [ ] cleanup compilation
+- [ ] config json
+- [ ] default definitions
+- [ ] wiki
+- [ ] save logs
