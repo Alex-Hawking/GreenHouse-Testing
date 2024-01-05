@@ -10,10 +10,9 @@ const registry: Map<RegExp[], string> = new Map();
 
 (async () => {
     try {
-        const bdd: Path = await ManagePath('/Users/alexhawking/Desktop/Programming/PickledThreads/example_bdd');
+        const bdd: Path = await ManagePath('/Users/alexhawking/Desktop/Programming/GreenHouse/test_bdd');
         await Link(bdd.steps, registry);
-        console.log(registry)
-        //await Compile(bdd.features, registry);
+        await Compile(bdd.features, registry, bdd);
     } catch (error) {
         console.error('Error processing files:', error);
     }

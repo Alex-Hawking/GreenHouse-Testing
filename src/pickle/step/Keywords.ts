@@ -9,7 +9,7 @@ function gherkinToRegex(step: string): RegExp {
     for (const [placeholder, regex] of Object.entries(patterns)) {
         regexStr = regexStr.replace(new RegExp(placeholder, 'g'), regex);
     }
-    return new RegExp(`^${regexStr}$`)
+    return new RegExp(`${regexStr}`)
 }
 
 export const Given = (step: string): RegExp => {

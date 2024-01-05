@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "clean": "rimraf ./dist ./temp",
-    "link": "node ./dist/src/index.js",
-    "build": "npm run clean && tsc && npm run link"
+    "clean": "rimraf ./dist ./.temp",
+    "compile": "node ./dist/src/index.js",
+    "build": "npm run clean && tsc"
   },
   "_moduleAliases": {
     "@Steps": "dist/src/pickle/step"

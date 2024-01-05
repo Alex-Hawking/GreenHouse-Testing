@@ -58,10 +58,10 @@ const compileTs = async (rootDir: string, outDir: string) => {
     }
 }
 
-const cloneDirectory = async (src: string, dest: string) => {
+const clone = async (src: string, dest: string) => {
     try {        
         await fs.copy(src, dest, {
-            overwrite: false,
+            overwrite: true,
         });
     } catch (err) {
         console.error('An error occurred:', err);
@@ -77,11 +77,13 @@ const deleteDirectory = async (dir: string) => {
 }
 
 const ManagePath = async (bdd: string): Promise<Path> => {
-    await cloneDirectory(bdd + '/features', './dist/bdd/features')
-    await cloneDirectory(bdd + '/steps/', './temp/steps')
-    await compileTs('./temp/steps', './dist/bdd/steps')
-    await deleteDirectory('./temp/')
+    await clone(bdd + '/features', './dist/bdd/features')
+    await clone(bdd + '/steps/', './.temp/steps')
 
+    await compileTs('./.temp/steps', './dist/bdd/steps')
+    await deleteDirectory('./.temp/')
+
+    await clone('./src/compiler/template', './dist/src/compiler/template')
     const returnPath: Path = {
         root: path.resolve('./dist/bdd/'),
         features: path.resolve('./dist/bdd/features/'),

@@ -4,7 +4,7 @@
 
 const { chromium } = require('playwright');
 
-describe('Playwright with Jest', () => {
+describe('#name', () => {
   let browser;
   let page;
 
