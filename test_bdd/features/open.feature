@@ -1,4 +1,4 @@
-Feature: Open url
+Feature: Open google
 
     Scenario:
         Given I open 'https://www.google.com'

@@ -1,5 +1,4 @@
-export const template: string = `
-#comment
+export const template: string = `#comment
 
 #imports
 

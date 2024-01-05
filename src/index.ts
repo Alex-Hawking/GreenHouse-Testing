@@ -6,11 +6,13 @@ import ManagePath from "./precompiler/pathmanager";
 
 import { type Path } from './types'
 
+const bddPath = process.argv[2];
+
 const registry: Map<RegExp[], string> = new Map();
 
 (async () => {
     try {
-        const bdd: Path = await ManagePath('/Users/alexhawking/Desktop/Programming/GreenHouse/test_bdd');
+        const bdd: Path = await ManagePath(bddPath);
         await Link(bdd.steps, registry);
         await Compile(bdd.features, registry, bdd);
     } catch (error) {
