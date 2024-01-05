@@ -91,7 +91,6 @@ const Compile = async (featuresDir: string, registry: Map<RegExp[], string>, bdd
                                     .replace('#tests', testsString);
                 
                 fs.promises.writeFile(`${bdd.features}/js/${fileName}.test.js`, test_template)
-                    .then(() => console.log('File written successfully'))
                     .catch(error => console.error('Error writing file:', error));
             });
 

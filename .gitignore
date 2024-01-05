@@ -38,3 +38,4 @@ Thumbs.db
 # yarn.lock
 
 # Build directories specific to your setup
+*.log

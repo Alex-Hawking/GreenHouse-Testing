@@ -1,3 +1,5 @@
+const globals = require('../../../GreenHouse')
+
 export const template: string = `#comment
 
 #imports
@@ -10,7 +12,7 @@ describe('#name', () => {
 
   beforeAll(async () => {
     // Launch browser
-    browser = await chromium.launch({ headless: false });
+    browser = await chromium.launch({ headless: ${globals.headless} });
 
     // Create a new page
     page = await browser.newPage();
