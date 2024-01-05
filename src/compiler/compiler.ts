@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from'path'
 import { type Path } from '../types' 
+import { template } from './template'
 const readline = require('readline');
 
 const Compile = async (featuresDir: string, registry: Map<RegExp[], string>, bdd: Path) => {
@@ -13,12 +14,15 @@ const Compile = async (featuresDir: string, registry: Map<RegExp[], string>, bdd
         if (stat.isDirectory()) {
             await Compile(fullPath, registry, bdd);
         } else {
-            const imports: Map<string, string> = new Map();
+            const importModules: Map<string, string> = new Map();
             let name: string;
+            const fileName = fullPath.split('/').pop(); 
             const comment: string = `//Test file compiled from ${fullPath}`
             const fileStream = fs.createReadStream(fullPath);
 
             let tests: string[] = []
+            let importModuleCode: string[] = []
+
 
             const rl = readline.createInterface({
             input: fileStream,
@@ -33,25 +37,62 @@ const Compile = async (featuresDir: string, registry: Map<RegExp[], string>, bdd
                 for (let [regexArray, importPath] of registry.entries()) {
                     for (let regex of regexArray) {
                         if (regex.test(line)) {
-                            if (!imports.has(importPath.split('/').slice(-1)[0])) {
-                                imports.set(importPath.split('/').slice(-1)[0], importPath)
+                            const moduleName = importPath.split('/').slice(-1)[0]
+                            if (!importModules.has(moduleName)) {
+                                importModules.set(moduleName, importPath)
                             }
                             const matches = line.match(regex)
-
-
-                            tests.push(`
-                            test('${name}', async () => {
-                                await page.goto('https://www.google.com');
-                                await expect(page.title()).resolves.toMatch('Google');
-                              });
-                            `)
+                            if (matches) {
+                                if (matches.length == 1) {
+                                    tests.push(
+                                        `test("${matches[0]}", async () => { await ${moduleName}.default.StepFunction(page)});`
+                                    )
+                                } else {
+                                    let imports = ''
+                                    for (let i = 1; i < matches.length; i++) {
+                                        let parsedValue;
+                                        if (!isNaN(parseFloat(matches[i]))) {
+                                            // Convert to Number if it's a numeric string
+                                            parsedValue = Number(matches[i]);
+                                        } else if (matches[i] === 'true' || matches[i] === 'false') {
+                                            // Convert to Boolean if it matches 'true' or 'false'
+                                            parsedValue = matches[i] === 'true';
+                                        } else {
+                                            // Keep as string for all other cases
+                                            parsedValue = `"${matches[i]}"`; 
+                                        }
+                                        imports += parsedValue + ', '
+                                    }
+                                    imports += 'page'
+                                    tests.push(
+                                        `test("${matches[0]}", async () => { await ${moduleName}.default.StepFunction(${imports})});`
+                                    )
+                                }
+                                
+                            }
                         }
                     }
                 }
-                console.log(imports)
+                
             });
+
             rl.on('close', () => {
-                //console.log('Finished reading the file');
+                for (const [name, path] of importModules) {
+                    importModuleCode.push(`const ${name} =  require('${path}')`)
+                }
+
+                const importModuleCodeString = importModuleCode.join('\n');
+                const testsString = tests.join('\n');
+
+                let test_template = template
+                                    .replace('#comment', comment)
+                                    .replace('#imports', importModuleCodeString)
+                                    .replace('#name', name)
+                                    .replace('#tests', testsString);
+                
+                fs.promises.writeFile(`${bdd.features}/js/${fileName}.test.js`, test_template)
+                    .then(() => console.log('File written successfully'))
+                    .catch(error => console.error('Error writing file:', error));
             });
 
         }

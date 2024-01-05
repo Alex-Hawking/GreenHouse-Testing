@@ -82,8 +82,9 @@ const ManagePath = async (bdd: string): Promise<Path> => {
 
     await compileTs('./.temp/steps', './dist/bdd/steps')
     await deleteDirectory('./.temp/')
+    await deleteDirectory('./dist/bdd/features/js')
+    await fs.promises.mkdir('./dist/bdd/features/js', { recursive: true });
 
-    await clone('./src/compiler/template', './dist/src/compiler/template')
     const returnPath: Path = {
         root: path.resolve('./dist/bdd/'),
         features: path.resolve('./dist/bdd/features/'),

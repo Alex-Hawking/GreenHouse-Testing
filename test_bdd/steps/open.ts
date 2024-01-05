@@ -11,7 +11,7 @@ const test = new Step(
     
     //Handler function
     async (url: string, page: Page) => {
-        await page.goto(url)
+        await page.goto(url, { waitUntil: 'load' })
     }
 )
 

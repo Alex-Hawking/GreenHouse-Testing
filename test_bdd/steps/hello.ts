@@ -9,7 +9,7 @@ const test = new Step(
     ],
     
     //Handler function
-    async (url: string, page: Page) => {
+    async (page: Page) => {
         console.log("Hello World!")
     }
 )

@@ -10,7 +10,7 @@ const test = new Step(
     
     //Handler function
     async (time: string, page: Page) => {
-        await page.waitForTimeout(parseInt(time))
+        await page.waitForTimeout(parseInt(time) * 1000)
     }
 )
 
