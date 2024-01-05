@@ -1,0 +1,30 @@
+{
+  "name": "pickled-threads-new",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rimraf ./dist ./temp",
+    "link": "node ./dist/src/index.js",
+    "build": "npm run clean && tsc && npm run link"
+  },
+  "_moduleAliases": {
+    "@Steps": "dist/src/pickle/step"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jest": "^29.7.0",
+    "playwright": "^1.40.1",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.10.5",
+    "fs-extra": "^11.2.0",
+    "glob": "^10.3.10",
+    "module-alias": "^2.2.3",
+    "p-limit": "^5.0.0",
+    "rimraf": "^5.0.5"
+  }
+}
