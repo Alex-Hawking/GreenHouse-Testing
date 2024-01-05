@@ -7,7 +7,8 @@
     "clean": "rimraf ./dist ./.temp",
     "compile": "node ./dist/src/index.js",
     "build": "npm run clean && tsc",
-    "tests": "node ./dist/src/runner/index.js"
+    "tests": "node ./dist/src/runner/index.js",
+    "reset": "node ./src/reset.js"
   },
   "_moduleAliases": {
     "@Steps": "dist/src/pickle/step"
