@@ -54,7 +54,7 @@ const sayHello = new Step(
 export default sayHello
 ```
 There are a number of default step definitions built into GreenHouse for common steps, currently the following are supported:
-table>
+<table>
   <tr>
     <th style="width:200px;">Name</th>
     <th style="width:300px;">Gherkin</th>
