@@ -89,7 +89,7 @@ export default test
 ```
 The datatype to pass into the function is given between `{}`. Currently the following datatypes are accepted:
 ```
-{string}: any characters between 2 quotes ""    
+{string}: any characters between 2 quotes "" / ''    
 {bool}: true / false  
 {int}: any numbers (I will probably adding floating point numbers soon)         
 ```
@@ -134,7 +134,7 @@ const Save = new Step(
 
 export default Save
 ```
-Setting a variable requires the `page` object, as well as the variable name (key) as a `string`, and the variable content (string, int or bool, dependant on what the function is expecting as provided in the *matching gherkin*)<br>
+Setting a variable requires the `page` object, as well as the variable name (key) as a `string`, and the variable content (string, int or bool, dependant on what the function is expecting as provided in the *matching gherkin*)<br><br>
 *Getting*<br>
 Variables can be accessed from within features using `$$` and from within step definitions using the `Get` action, as below:<br>
 *Usage within `.feature` files:*
@@ -181,7 +181,7 @@ Adding a bunch of default step definitions for basic tasks, as well as cleaning 
 
 TODO:
 
-- [ ] save to variables (in progress)
+- [x] save to variables
 - [ ] use variables for selectors (in progress)
 - [ ] default definitions (in progress)
 - [ ] functions for repeated actions (in progress)

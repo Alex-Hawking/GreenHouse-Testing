@@ -45,7 +45,7 @@ const compileFeatureFile = async (filePath: string, precompiledRegex: RegexModul
     importModuleCode = Array.from(importModules, ([name, path]) => `const ${name} = require('${path}');`);
 
     const testTemplate = template
-                            .replace('#comment', `// Test file compiled from ${filePath}`)
+                            .replace('#comment', `// Source file: ${filePath}`)
                             .replace('#imports', importModuleCode.join('\n'))
                             .replace('#name', name || '')
                             .replace('#tests', tests.join('\n'));
