@@ -5,8 +5,14 @@ import Compile from "./compiler/compiler";
 import ManagePath from "./precompiler/pathmanager";
 
 import { type Path } from './types'
+import { exit } from "process";
 
 const bddPath = process.argv[2];
+
+if (bddPath == "" || !bddPath) {
+    console.error("Please enter the path to your bdd folder")
+    exit(1)
+}
 
 const registry: Map<RegExp[], string> = new Map();
 

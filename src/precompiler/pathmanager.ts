@@ -7,17 +7,18 @@ import { type Path } from '../types'
 
 const findAllTsFiles = async (rootDir: string, fileList: string[] = []) => {
     const files = await fs.readdir(rootDir);
-    for (const file of files) {
-        const fullPath: string = path.join(rootDir, file);
+    await Promise.all(files.map(async (file) => {
+        const fullPath = path.join(rootDir, file);
         const stat = await fs.stat(fullPath);
         if (stat.isDirectory()) {
             await findAllTsFiles(fullPath, fileList);
         } else if (fullPath.endsWith('.ts')) {
             fileList.push(fullPath);
         }
-    }
+    }));
     return fileList;
-}
+};
+
 
 const compileTs = async (rootDir: string, outDir: string) => {
     try {
@@ -77,12 +78,18 @@ const deleteDirectory = async (dir: string) => {
 }
 
 const ManagePath = async (bdd: string): Promise<Path> => {
-    await clone(bdd + '/features', './dist/bdd/features')
-    await clone(bdd + '/steps/', './.temp/steps')
+    // Parallel clone processes
+    const cloneFeatures = clone(bdd + '/features', './dist/bdd/features')
+    const cloneSteps = clone(bdd + '/steps/', './.temp/steps')
+    await Promise.all([cloneFeatures, cloneSteps])
 
     await compileTs('./.temp/steps', './dist/bdd/steps')
-    await deleteDirectory('./.temp/')
-    await deleteDirectory('./dist/bdd/features/js')
+
+    // Parellel delete operations
+    const deleteTemp =  deleteDirectory('./.temp/')
+    const deleteJsFeatures =  deleteDirectory('./dist/bdd/features/js')
+    await Promise.all([deleteTemp, deleteJsFeatures])
+
     await fs.promises.mkdir('./dist/bdd/features/js', { recursive: true });
 
     const returnPath: Path = {

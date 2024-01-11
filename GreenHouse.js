@@ -1,5 +1,5 @@
 // For setting global test properties
-// NOTE: you may need to npm run build && npm run compile before all changes take effect
+// NOTE: you may need to `npm run reset` (npm run build && npm run compile) before all changes take effect
 
 const globals = {
     // Open browser in headless mode
@@ -12,7 +12,7 @@ const globals = {
     verbose: true,
 
     // Save output logs
-    saveLogs: true
+    saveLogs: false
 }
 
 module.exports = globals
