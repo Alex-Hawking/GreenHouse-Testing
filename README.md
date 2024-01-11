@@ -105,7 +105,63 @@ Example_BDD_Folder
     ├── hello.ts
     ├── open.ts
 ```
-**Note:** The file `picklereqs.d.ts` is also in the BDD folder, this simply contains module declarations `declare module '@Steps/Template' declare module '@Steps/Keywords'` and is optional, I just have it to silence text-editor warnings.
+*Note:* The file `pickle-decs.d.ts` is also in the BDD folder, this simply contains module declarations `declare module '@Steps/Template' declare module '@Steps/Keywords'` and is optional, I just have it to silence text-editor warnings. <br>
+
+**Variables** can also be used within your tests to save info between steps. Here is a simple example:
+```
+Given I save 'Hello World!' as 'testVar'
+And I add log '$$testVar'
+```
+*Setting*<br/>
+Within your step definitions variables are set using the Set action, like below:
+```typescript
+import Step from '@Steps/Template'
+import { Given } from '@Steps/Keywords'
+import { Page } from 'playwright/test'
+import { Set } from '@Actions/VarControl'
+
+const Save = new Step(
+    //Matching gherkin
+    [
+        Given('I save {string} as {string}'),
+    ],
+    
+    //Handler function
+    async (content, varName, page: Page) => {
+        Set(page, varName, content)
+    }
+)
+
+export default Save
+```
+Setting a variable requires the `page` object, as well as the variable name (key) as a `string`, and the variable content (string, int or bool, dependant on what the function is expecting as provided in the *matching gherkin*)<br>
+*Getting*<br>
+Variables can be accessed from within features using `$$` and from within step definitions using the `Get` action, as below:<br>
+*Usage within `.feature` files:*
+```
+And I add log '$$testVar'
+```
+*Usage within step definition `.ts` files:*
+```typescript
+import Step from '@Steps/Template'
+import { Then } from '@Steps/Keywords'
+import { Page } from 'playwright/test'
+import { Get } from '@Actions/VarControl'
+
+const LogVar = new Step(
+    //Matching gherkin
+    [
+        Then('I log variable {string}')
+    ],
+    
+    //Handler function
+    async (varName: string, page: Page) => {
+        console.log(Get(page, varName))
+    }
+)
+
+export default LogVar
+```
 
 ### Running Tests
 
