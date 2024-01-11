@@ -16,6 +16,9 @@ describe('#name', () => {
 
     // Create a new page
     page = await browser.newPage();
+
+    // Initialise variables
+    page.variables = new Map();
   });
 
   afterAll(async () => {

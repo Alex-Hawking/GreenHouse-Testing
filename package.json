@@ -11,7 +11,8 @@
     "reset": "node ./src/reset.js"
   },
   "_moduleAliases": {
-    "@Steps": "dist/src/pickle/step"
+    "@Steps": "dist/src/pickle/step",
+    "@Actions": "dist/src/pickle/actions"
   },
   "author": "",
   "license": "ISC",

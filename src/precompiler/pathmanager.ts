@@ -31,6 +31,7 @@ const compileTs = async (rootDir: string, outDir: string) => {
             outDir: outDir,
             paths: {
                 "@Steps/*": ["./dist/src/pickle/step/*"],
+                "@Actions/*": ["./dist/src/pickle/actions/*"]
             }
         });
 

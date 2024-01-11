@@ -132,7 +132,7 @@ TODO:
 - [x] cleanup compilation
 - [ ] config json
 - [ ] wiki
-- [ ] save logs
-- [ ] format saved logs
+- [ ] save logs (in progress)
+- [ ] format saved logs (in progress)
 - [ ] caching of compiled files
 - [ ] user friendly error catching with compilation and running
