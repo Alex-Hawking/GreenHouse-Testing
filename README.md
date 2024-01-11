@@ -53,6 +53,27 @@ const sayHello = new Step(
 
 export default sayHello
 ```
+There are a number of default step definitions built into GreenHouse for common steps, currently the following are supported:
+<table>
+  <tr>
+    <th style="width:200px;">Name</th>
+    <th style="width:300px;">Gherkin</th>
+    <th style="width:200px;">Action Function</th>
+    <th style="width:150px;">Usage</th>
+  </tr>
+  <tr>
+    <td>Open Url</td>
+    <td><code>Given I open {string}</code></td>
+    <td><code>Open(page: Page, url: string)</code></td>
+    <td>Opens a url on the page</td>
+  </tr>
+  <tr>
+    <td>Wait</td>
+    <td><code>Then I wait {int}</code></td>
+    <td><code>Wait(page: Page, time: string)</code></td>
+    <td>Waits a set amount of seconds</td>
+  </tr>
+</table>
 The Step class constructor requires 2 arguments:
 - *Sentences to match*, created using the pre-defined keywords
 - *A handler function*, essentially saying what to do (all handler functions require the Playwright page object as an argument to allow the tests to interact with the browser page)
