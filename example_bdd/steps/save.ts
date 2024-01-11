@@ -1,16 +1,17 @@
 import Step from '@Steps/Template'
 import { Given } from '@Steps/Keywords'
 import { Page } from 'playwright/test'
+import { Set } from '@Actions/VarControl'
 
 const test = new Step(
     //Matching gherkin
     [
-        Given('I open {string}')
+        Given('I save {string} as {string}')
     ],
     
     //Handler function
-    async (url: string, page: Page) => {
-        await page.goto(url, { waitUntil: 'load' })
+    async (content, varName, page: Page) => {
+        Set(page, varName, content)
     }
 )
 
