@@ -1,12 +1,13 @@
 import Step from '@Steps/Template'
-import { Given } from '@Steps/Keywords'
+import { Given, Then } from '@Steps/Keywords'
 import { Page } from 'playwright/test'
 import { Set } from '@Actions/VarControl'
 
 const test = new Step(
     //Matching gherkin
     [
-        Given('I save {string} as {string}')
+        Given('I save {string} as {string}'),
+        Then('I save {string} as {string}')
     ],
     
     //Handler function
