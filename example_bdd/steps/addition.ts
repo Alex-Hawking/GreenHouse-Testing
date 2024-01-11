@@ -5,13 +5,12 @@ import { Page } from 'playwright/test'
 const test = new Step(
     //Matching gherkin
     [
-        Then('I log {string}'),
-        And('I log {string}')
+        And('I add {int} to variable {string}'),
     ],
     
     //Handler function
-    async (text: string, page: Page) => {
-        console.log(text)
+    async (number: number, number2: number, page: Page) => {
+        await console.log(number + number2)
     }
 )
 
