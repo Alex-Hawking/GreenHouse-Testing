@@ -125,10 +125,14 @@ Adding a bunch of default step definitions for basic tasks, as well as cleaning 
 
 TODO:
 
-- [ ] save to variables
-- [ ] use variables for selectors
-- [ ] cleanup compilation
+- [ ] save to variables (in progress)
+- [ ] use variables for selectors (in progress)
+- [ ] default definitions (in progress)
+- [ ] functions for repeated actions (in progress)
+- [x] cleanup compilation
 - [ ] config json
-- [ ] default definitions
 - [ ] wiki
 - [ ] save logs
+- [ ] format saved logs
+- [ ] caching of compiled files
+- [ ] user friendly error catching with compilation and running
