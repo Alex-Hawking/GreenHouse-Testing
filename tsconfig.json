@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+      "target": "es6",            
+      "module": "commonjs",
+      "moduleResolution": "node",        
+      "outDir": "dist",           
+      "rootDir": "./",            
+      "strict": true, 
+      "declaration": true,             
+      "esModuleInterop": true,     
+      "skipLibCheck": true,
+      "paths": {
+        "@Step/*": ["./src/pickle/step/*"],
+        "@Actions/*": ["./src/pickle/actions/*"]
+      }         
+    },
+    "include": ["src/**/*"],
+    "exclude": ["src/pickle/defaults/**/*"]         
+}
