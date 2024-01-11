@@ -37,7 +37,7 @@ const compileFeatureFile = async (filePath: string, precompiledRegex: RegexModul
                 });
 
                 const imports = modifiedImports.join(', ');
-                tests.push(`\ttest("${matches[0]}", async () => { await runStep( ${moduleName}.default.StepFunction, ${imports}, page ) });`);
+                tests.push(`\ttest("${matches[0]}", async () => { await runStep( ${moduleName}.default.StepFunction, page, ${imports} ) });`);
             }
         }
     }

@@ -30,7 +30,7 @@ const compileTs = async (rootDir: string, outDir: string) => {
             module: ts.ModuleKind.CommonJS,
             outDir: outDir,
             paths: {
-                "@Steps/*": ["./dist/src/pickle/step/*"],
+                "@Step/*": ["./dist/src/pickle/step/*"],
                 "@Actions/*": ["./dist/src/pickle/actions/*"]
             }
         });
@@ -84,6 +84,10 @@ const ManagePath = async (bdd: string): Promise<Path> => {
     const cloneSteps = clone(bdd + '/steps/', './.temp/steps')
     await Promise.all([cloneFeatures, cloneSteps])
 
+    await fs.promises.mkdir('./dist/bdd/steps', { recursive: true });
+
+    await compileTs(path.resolve(__dirname, '../../../src/pickle/defaults'), './dist/bdd/steps')
+
     await compileTs('./.temp/steps', './dist/bdd/steps')
 
     // Parellel delete operations
@@ -92,11 +96,10 @@ const ManagePath = async (bdd: string): Promise<Path> => {
     await Promise.all([deleteTemp, deleteJsFeatures])
 
     await fs.promises.mkdir('./dist/bdd/features/js', { recursive: true });
-
     const returnPath: Path = {
         root: path.resolve('./dist/bdd/'),
         features: path.resolve('./dist/bdd/features/'),
-        steps: path.resolve('./dist/bdd/steps/')
+        steps: path.resolve('./dist/bdd/steps/'),
     }
 
     return returnPath

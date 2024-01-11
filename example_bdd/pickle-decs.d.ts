@@ -1,3 +1,3 @@
 
-declare module '@Steps/*' 
+declare module '@Step/*' 
 declare module '@Actions/*' 

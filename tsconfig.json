@@ -10,9 +10,10 @@
       "esModuleInterop": true,     
       "skipLibCheck": true,
       "paths": {
-        "@Steps/*": ["./src/pickle/step/*"],
+        "@Step/*": ["./src/pickle/step/*"],
         "@Actions/*": ["./src/pickle/actions/*"]
       }         
     },
-    "include": ["src/**/*"]         
+    "include": ["src/**/*"],
+    "exclude": ["src/pickle/defaults/**/*"]         
 }

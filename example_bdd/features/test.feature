@@ -1,5 +1,5 @@
 Feature: Exmaple
 
     Scenario:
-        Given I save 'Hello World!' as 'testVar'
-        And I add log '$$testVar'
+        Given I open 'https://www.alexhawking.dev'
+        Then I wait 10s
