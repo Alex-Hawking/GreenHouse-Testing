@@ -192,3 +192,4 @@ TODO:
 - [ ] format saved logs (in progress)
 - [ ] caching of compiled files
 - [ ] user friendly error catching with compilation and running
+- [ ] implement cucumbers `Background` feature
