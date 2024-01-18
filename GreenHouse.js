@@ -6,7 +6,7 @@ const globals = {
     headless: false,
 
     // Max timeout for tests
-    testTimeout: 20000,
+    testTimeout: 10000,
 
     // Verbose output
     verbose: true,

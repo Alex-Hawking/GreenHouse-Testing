@@ -33,8 +33,7 @@ describe('#name', () => {
       throw error;
     }
   };
-
+  // Tests
 #tests
-
 });
 `
