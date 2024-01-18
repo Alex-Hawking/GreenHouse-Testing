@@ -97,6 +97,7 @@ const ManagePath = async (bdd: string): Promise<Path> => {
 
     await fs.promises.mkdir('./dist/bdd/features/js', { recursive: true });
     const returnPath: Path = {
+        origin: bdd,
         root: path.resolve('./dist/bdd/'),
         features: path.resolve('./dist/bdd/features/'),
         steps: path.resolve('./dist/bdd/steps/'),
