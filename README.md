@@ -9,6 +9,61 @@ GreenHouse offers the abilitiy to **compile** Gherkin code into Playwright/Jest 
 
 > Gherkin is a domain-specific language that enables the definition of business behavior without the need to go into the details of implementation. It's primarily used for Behavior-Driven Development (BDD), a software development approach that encourages collaboration between developers, QA, non-technical participants, and business stakeholders. (Thanks ChatGPT) [more](https://cucumber.io/docs/gherkin/reference/)
 
+#### Example
+
+`open_website.feature`
+```gherkin
+Feature: Open website and look at it
+
+    Scenario:
+        Given I open 'https://www.alexhawking.dev'
+        Then I wait 5s
+
+```
+-> open_website.test.js
+```javascript
+// This file was compiled from Gherkin using GreenHouse🌱 (https://github.com/Alex-Hawking/GreenHouse/tree/main)
+// Source file: /Users/alexhawking/Desktop/Programming/GreenHouse/dist/bdd/features/test.feature
+
+const Open = require('/Users/alexhawking/Desktop/Programming/GreenHouse/dist/bdd/steps/Open.js');
+const Wait = require('/Users/alexhawking/Desktop/Programming/GreenHouse/dist/bdd/steps/Wait.js');
+const { chromium } = require('playwright');
+describe('Open website and look at it', () => {
+  let browser, page;
+  beforeAll(async () => {
+    try {
+      browser = await chromium.launch({ headless: false });
+      page = await browser.newPage();
+      page.variables = new Map();
+    } catch (error) {
+      console.error('Error setting up the browser:', error);
+      throw error;
+    }
+  });
+  afterAll(async () => {
+    try {
+      if (page) await page.close();
+      if (browser) await browser.close();
+    } catch (error) {
+      console.error('Error closing the browser:', error);
+    }
+  });
+  const runStep = async (stepFunction, ...args) => {
+    try {
+      await stepFunction(...args);
+    } catch (error) {
+      console.error('Error running step:', error);
+      throw error;
+    }
+  };
+
+	test("Given I open 'https://www.alexhawking.dev'", async () => { await runStep( Open.default.StepFunction, page, "https://www.alexhawking.dev" ) });
+	test("Then I wait 5s", async () => { await runStep( Wait.default.StepFunction, page, 5 ) });
+
+});
+```
+This file can then be ran using `npx jest` (given Jest and Playwright are installed).
+
 ## How does it work? (Docs)
 
 There are 2 main parts to GreenHouse.
