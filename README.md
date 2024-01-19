@@ -5,7 +5,9 @@ Currently in *pre-alpha*, everything is subject to change and become (*hopefully
 ## What is this?
 
 This is an application for browser-based front-end QA testing. 
-GreenHouse offers the abilitiy to **compile** Gherkin code into Playwright/Jest **test files** (`test.js`), which can then be run from anywhere using Jest.
+GreenHouse offers the abilitiy to **compile** Gherkin code into Playwright/Jest **test files** (`test.js`), which can then be run from anywhere using Playwright/Jest.
+
+I am also building a docker image that is used for running these for local testing (in browser) and in a GitHub action (headless)
 
 > Gherkin is a domain-specific language that enables the definition of business behavior without the need to go into the details of implementation. It's primarily used for Behavior-Driven Development (BDD), a software development approach that encourages collaboration between developers, QA, non-technical participants, and business stakeholders. (Thanks ChatGPT) [more](https://cucumber.io/docs/gherkin/reference/)
 
@@ -25,8 +27,8 @@ Feature: Open website and look at it
 // This file was compiled from Gherkin using GreenHouse🌱 (https://github.com/Alex-Hawking/GreenHouse/tree/main)
 // Source file: /Users/alexhawking/Desktop/Programming/GreenHouse/dist/bdd/features/test.feature
 
-const Open = require('/Users/alexhawking/Desktop/Programming/GreenHouse/dist/bdd/steps/Open.js');
-const Wait = require('/Users/alexhawking/Desktop/Programming/GreenHouse/dist/bdd/steps/Wait.js');
+const Open = require('/steps/Open.js');
+const Wait = require('/steps/Wait.js');
 const { chromium } = require('playwright');
 describe('Open website and look at it', () => {
   let browser, page;
@@ -59,10 +61,9 @@ describe('Open website and look at it', () => {
 
 	test("Given I open 'https://www.alexhawking.dev'", async () => { await runStep( Open.default.StepFunction, page, "https://www.alexhawking.dev" ) });
 	test("Then I wait 5s", async () => { await runStep( Wait.default.StepFunction, page, 5 ) });
-
 });
 ```
-This file can then be ran using `npx jest` (given Jest and Playwright are installed).
+This file can then be ran using `npx jest` (given Jest and Playwright are installed), or from within the docker image.
 
 ## How does it work? (Docs)
 
@@ -82,7 +83,7 @@ Feature: Example test
         Given I say 'Hello World!'
 ```
 
-Tests are saved as `.feature` files within the `/features/` directory of your `BDD` directory (more on this later).
+Tests are saved as `.feature` files within the `/features/` directory of your `bdd` directory (more on this later).
 
 Tests MUST have `Feature: (basic explainer of test)`  <br>
 
@@ -127,6 +128,48 @@ There are a number of default step definitions built into GreenHouse for common 
     <td><code>Then I wait {int}</code></td>
     <td><code>Wait(page: Page, time: string)</code></td>
     <td>Waits a set amount of seconds</td>
+  </tr>
+  <tr>
+    <td>Click</td>
+    <td><code>Given/And I click {string}</code></td>
+    <td><code>Click(page: Page, selector: string)</code></td>
+    <td>Clicks an element on the page</td>
+  </tr>
+  <tr>
+    <td>Equality</td>
+    <td><code>Then {string} should equal {string}</code></td>
+    <td><code>N/A</code></td>
+    <td>Compares 2 items, generally variables</td>
+  </tr>
+  <tr>
+    <td>Log</td>
+    <td><code>Then I log {string} to the console</code></td>
+    <td><code>N/A</code></td>
+    <td>Logs a string (or variable) to the console</td>
+  </tr>
+  <tr>
+    <td>Reload</td>
+    <td><code>Then I reload the page</code></td>
+    <td><code>N/A</code></td>
+    <td>Reloads the page</td>
+  </tr>
+  <tr>
+    <td>Save String</td>
+    <td><code>Given I save {string} as {string}</code></td>
+    <td><code>N/A</code></td>
+    <td>Given/And I save {string} as {string}</td>
+  </tr>
+  <tr>
+    <td>Save Random String</td>
+    <td><code>Given/And I save generate a random string with length {int} and save as {string}</code></td>
+    <td><code>N/A</code></td>
+    <td>Save a random string as a variable</td>
+  </tr>
+  <tr>
+    <td>Wait For Selector State</td>
+    <td><code>Then/And I wait for element {string} to be {string}</code></td>
+    <td><code>N/A</code></td>
+    <td>Waits for an element to be ['attached', 'detached', 'visible', 'hidden']</td>
   </tr>
 </table>
 The Step class constructor requires 2 arguments:
@@ -173,15 +216,17 @@ Currently variables are passed in as arguments in the order they appear in the s
 
 All typescript step definitions must be kept within the steps folder. See the below tree:
 ```
-Example_BDD_Folder
-├── features
-│   └── example.feature
-├── picklereqs.d.ts
-└── steps
-    ├── hello.ts
-    ├── open.ts
+TestsFolder
+├── GreenHouse.js
+├── PickleDecs.ts
+├── bdd
+│   ├── features
+│   └── steps
+├── pickle-dev
+│   ├─ (default steps, actions and templates are stored here)
+└── tsconfig.json
 ```
-*Note:* The file `pickle-decs.d.ts` is also in the BDD folder, this simply contains module declarations `declare module '@Steps/Template' declare module '@Steps/Keywords'` and is optional, I just have it to silence text-editor warnings. <br>
+*Note:* The pickle-dev folder must be cloned in using the above structure, I will make a template to clone this in soon. The file `GreenHouse.js` contains config for the user to change. The files `PickleDecs.ts` and `tsconfig.json` are also in the test folder for compilation.<br>
 
 **Variables** can also be used within your tests to save info between steps. Here is a simple example:
 ```

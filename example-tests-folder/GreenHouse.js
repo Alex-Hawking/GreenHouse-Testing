@@ -2,13 +2,10 @@
 // NOTE: you may need to `npm run reset` (npm run build && npm run compile) before all changes take effect
 
 const globals = {
-    // Open browser in headless mode
-    headless: true,
-
     // Max timeout for tests
     testTimeout: 20000,
 
-    // Verbose output
+    // Verbose output (in progress and allat)
     verbose: true,
 
     // Save output logs

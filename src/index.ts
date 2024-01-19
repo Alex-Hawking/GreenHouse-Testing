@@ -29,10 +29,11 @@ const registry: Map<RegExp[], string> = new Map();
 (async () => {
     try {
         console.log('Starting compilation with \x1b[1mGreenHouse 0.0.1 \x1b[0m🌱');
+        const startTime: any = new Date();
         // Remove dist directory
         await removeDirectory(path.join(bddPath, "/dist"));
         console.log('Managing paths...')
-        console.log('Compiling typescript...')
+        console.log('Compiling TypesSript...')
         // Manages paths for the BDD project and stores the result in `bdd`.
         const bdd: Path = await ManagePath(bddPath);
         
@@ -45,6 +46,8 @@ const registry: Map<RegExp[], string> = new Map();
         // Remove temp directory
         console.log('Cleaning up...\n')
         await removeDirectory(path.join(bdd.origin, "/.temp"));
+        const endTime: any = new Date(); // End time
+        const timeDiff = (endTime - startTime) / 1000;
         console.log('\x1b[32m' +
         '⠀⠀⠀⠀⠀⣠⡤⠤⢤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣤⠤⠤⣄⡀⠀\n' +
         '⠀⠀⠀⢀⡞⠁⠀⠀⠀⠀⠙⠳⣤⡀⠀⠀⠀⠀⣠⠖⠋⠁⠀⠀⠀⠈⢻⡄\n' +
@@ -62,7 +65,7 @@ const registry: Map<RegExp[], string> = new Map();
         '⠀⠀⠀⠀⠀⠀⢼⠀⠀⠀⠀⠀⠀⠀⠀⣻⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n' +
         '⠀⠀⠀⠀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n' +
         '\x1b[0m');
-        console.log('\x1b[32m%s\x1b[0m', 'Compilation successful')
+        console.log('\x1b[32m%s\x1b[0m', `Compilation successful (${timeDiff}s)`)
         console.log(`Compiled into \x1b[1m/dist/\x1b[0m within \x1b[1m${bdd.origin}\x1b[0m`);
 
     } catch (error) {
