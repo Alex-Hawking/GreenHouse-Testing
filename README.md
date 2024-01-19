@@ -22,20 +22,22 @@ Feature: Open website and look at it
         Then I wait 5s
 
 ```
--> open_website.test.js
+Compiles to:
+`open_website.test.js`
 ```javascript
 // This file was compiled from Gherkin using GreenHouse🌱 (https://github.com/Alex-Hawking/GreenHouse/tree/main)
-// Source file: /Users/alexhawking/Desktop/Programming/GreenHouse/dist/bdd/features/test.feature
+// Source file: /Users/alexhawking/Desktop/Programming/greenhouse-useverb-webapp-tests/bdd/features/example.feature
 
-const Open = require('/steps/Open.js');
-const Wait = require('/steps/Wait.js');
+const Open = require('../steps/Open.js');
+const Wait = require('../steps/Wait.js');
 const { chromium } = require('playwright');
 describe('Open website and look at it', () => {
-  let browser, page;
+  let browser, context, page;
   beforeAll(async () => {
     try {
       browser = await chromium.launch({ headless: false });
-      page = await browser.newPage();
+      context = await browser.newContext();
+      page = await context.newPage();
       page.variables = new Map();
     } catch (error) {
       console.error('Error setting up the browser:', error);
@@ -45,6 +47,7 @@ describe('Open website and look at it', () => {
   afterAll(async () => {
     try {
       if (page) await page.close();
+      if (context) await context.close(); 
       if (browser) await browser.close();
     } catch (error) {
       console.error('Error closing the browser:', error);
@@ -58,11 +61,13 @@ describe('Open website and look at it', () => {
       throw error;
     }
   };
-
+  // Tests
 	test("Given I open 'https://www.alexhawking.dev'", async () => { await runStep( Open.default.StepFunction, page, "https://www.alexhawking.dev" ) });
 	test("Then I wait 5s", async () => { await runStep( Wait.default.StepFunction, page, 5 ) });
 });
+
 ```
+(These get compiled into a `/dist/` directory containing all dependencies so it can be used from anywhere) <br>
 This file can then be ran using `npx jest` (given Jest and Playwright are installed), or from within the docker image.
 
 ## How does it work? (Docs)
@@ -91,9 +96,9 @@ Tests MUST have `Feature: (basic explainer of test)`  <br>
 
 Steps are the typescript code definitions for each action within the Gherkin script. See the below example:
 ```typescript
-import Step from '@Steps/Template'
-import { And } from '@Steps/Keywords'
-import { Page } from 'playwright/test'
+import Step from '@Step/Template'
+import { And } from '@Step/Keywords'
+import { type Page } from '@PickleDecs'
 
 const sayHello = new Step(
     //Matching gherkin
@@ -172,11 +177,12 @@ There are a number of default step definitions built into GreenHouse for common 
     <td>Waits for an element to be ['attached', 'detached', 'visible', 'hidden']</td>
   </tr>
 </table>
-The Step class constructor requires 2 arguments:
+
+The Step class constructor (import from `@Step/Template`) requires 2 arguments:
 - *Sentences to match*, created using the pre-defined keywords
 - *A handler function*, essentially saying what to do (all handler functions require the Playwright page object as an argument to allow the tests to interact with the browser page)
 
-Currently the following matching keywords can be used:
+Currently the following matching keywords can be used (import from `@Step/Keywords`):
 ```
 Given()
 
@@ -213,6 +219,44 @@ The datatype to pass into the function is given between `{}`. Currently the foll
 {int}: any numbers (I will probably adding floating point numbers soon)         
 ```
 Currently variables are passed in as arguments in the order they appear in the sentence. *Always leave page as the last argument*.
+<br>
+
+**Action Functions** <br>
+These are function that can be used within step definitions for commonly used actions (can be imported from `@Actions/Wait`). All actions require the `Page` object be passed in. 
+<table>
+  <tr>
+    <th style="width:200px;">Name</th>
+    <th style="width:200px;">Function</th>
+    <th style="width:150px;">Usage</th>
+    <th style="width:150px;">Explanation</th>
+  </tr>
+  <tr>
+    <td>Wait</td>
+    <td><code>const Wait = async (page:Page, time: string)</code></td>
+    <td><code>await Wait(page, time)</code></td>
+    <td>Waits a set amount of seconds</td>
+  </tr>
+  <tr>
+    <td>Click</td>
+    <td><code>const Click = async (page: Page, selector: string)</code></td>
+    <td><code>await Click(page, selector)</code></td>
+    <td>Clicks an element on the page</td>
+  </tr>
+  <tr>
+    <td>Type</td>
+    <td><code>const Type = async (page:Page, selector: string, text: string)</code></td>
+    <td><code>await Type(page, selector, text)</code></td>
+    <td>Types text into element</td>
+  </tr>
+  <tr>
+    <td>Open</td>
+    <td><code>const Open = async (page:Page, url: string)</code></td>
+    <td><code>await Open(page, url)</code></td>
+    <td>Opens url in page</td>
+  </tr>
+</table>
+
+**Directory Structure**<br>
 
 All typescript step definitions must be kept within the steps folder. See the below tree:
 ```
