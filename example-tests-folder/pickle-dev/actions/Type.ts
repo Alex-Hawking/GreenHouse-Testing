@@ -1,4 +1,4 @@
-import { Page } from 'playwright/test'
+import { type Page } from '@PickleDecs'
 
 const Type = async (page:Page, selector: string, text: string) => {
     await page.click(selector); 

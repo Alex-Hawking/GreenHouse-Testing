@@ -1,7 +1,7 @@
 import Step from '@Step/Template'
 import Wait from '@Actions/Wait'
 import { Then } from '@Step/Keywords'
-import { type Page } from 'playwright/test'
+import { type Page } from '@PickleDecs'
 
 const WaitTimeout = new Step(
     //Matching gherkin

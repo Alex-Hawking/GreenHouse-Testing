@@ -1,4 +1,4 @@
-import { Page } from 'playwright/test'
+import { type Page } from '@PickleDecs'
 
 const Open = async (page:Page, url: string) => {
     await page.goto(url, { waitUntil: 'domcontentloaded' })

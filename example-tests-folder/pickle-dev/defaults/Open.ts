@@ -1,6 +1,6 @@
 import Step from '@Step/Template'
 import { Given } from '@Step/Keywords'
-import { type Page } from 'playwright/test'
+import { type Page } from '@PickleDecs'
 import Open from '@Actions/Open'
 
 const OpenUrl = new Step(

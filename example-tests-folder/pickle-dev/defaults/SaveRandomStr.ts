@@ -1,7 +1,7 @@
 import Step from '@Step/Template'
 import { Given, And } from '@Step/Keywords'
-import { type Page } from 'playwright/test'
-import { Set, Get } from '@Actions/VarControl'
+import { type Page } from '@PickleDecs'
+import { Set } from '@Actions/VarControl'
 
 const SaveRandomStr = new Step(
     //Matching gherkin

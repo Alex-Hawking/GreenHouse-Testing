@@ -8,12 +8,7 @@
       "strict": true, 
       "declaration": true,             
       "esModuleInterop": true,     
-      "skipLibCheck": true,
-      "paths": {
-        "@Step/*": ["./src/pickle/step/*"],
-        "@Actions/*": ["./src/pickle/actions/*"]
-      }         
+      "skipLibCheck": true   
     },
-    "include": ["src/**/*"],
-    "exclude": ["src/pickle/defaults/**/*"]         
+    "include": ["src/**/*"]        
 }

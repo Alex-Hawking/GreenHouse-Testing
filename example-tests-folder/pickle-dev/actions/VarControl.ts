@@ -1,10 +1,4 @@
-import { Page } from 'playwright/test';
-
-declare module 'playwright/test' {
-  interface Page {
-    variables: Record<string, any>;
-  }
-}
+import { Page } from '@PickleDecs';
 
 export const Set = (page: Page, varName: string, value: string) => {
     page.variables.set(varName, value)

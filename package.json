@@ -10,10 +10,6 @@
     "tests": "node ./dist/src/runner/index.js",
     "reset": "node ./src/reset.js"
   },
-  "_moduleAliases": {
-    "@Step": "dist/src/pickle/step",
-    "@Actions": "dist/src/pickle/actions"
-  },
   "author": "",
   "license": "ISC",
   "dependencies": {

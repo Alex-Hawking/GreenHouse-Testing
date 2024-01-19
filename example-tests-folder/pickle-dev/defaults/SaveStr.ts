@@ -1,6 +1,6 @@
 import Step from '@Step/Template'
 import { Given, And } from '@Step/Keywords'
-import { type Page } from 'playwright/test'
+import { type Page } from '@PickleDecs'
 import { Set } from '@Actions/VarControl'
 
 const SaveStr = new Step(

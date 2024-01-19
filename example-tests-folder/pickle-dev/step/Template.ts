@@ -1,4 +1,4 @@
-import { StepRegex, HandlerFunction } from "../types"
+import { HandlerFunction } from "../types"
 
 class Step {
     public StepsRegex: RegExp[]; 

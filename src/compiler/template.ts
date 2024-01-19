@@ -9,17 +9,12 @@ describe('#name', () => {
   let browser, context, page;
   beforeAll(async () => {
     try {
-      // Launch the browser
-      browser = await chromium.launch({ headless: ${globals.headless} });
-      
-      // Create a new context with video recording enabled
+      browser = await chromium.launch({ headless: false });
       context = await browser.newContext({
         recordVideo: {
-          dir: '/app/tests/videos' // Replace with your desired path
+          dir: '/app/tests/videos'
         }
       });
-
-      // Create a new page within the context
       page = await context.newPage();
       page.variables = new Map();
     } catch (error) {
@@ -30,7 +25,7 @@ describe('#name', () => {
   afterAll(async () => {
     try {
       if (page) await page.close();
-      if (context) await context.close(); // Make sure to close the context
+      if (context) await context.close(); 
       if (browser) await browser.close();
     } catch (error) {
       console.error('Error closing the browser:', error);

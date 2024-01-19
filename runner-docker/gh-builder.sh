@@ -53,8 +53,6 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-rm -rf "./tests"
-
 VIDEO_HOST_PATH="$CODE_PATH/dist/videos"
 
 
@@ -67,5 +65,7 @@ if [ $? -ne 0 ]; then
     echo "Tests failed"
     exit 1
 fi
+
+rm -rf "./tests"
 
 echo "Tests completed successfully"
