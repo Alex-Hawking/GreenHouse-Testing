@@ -162,7 +162,7 @@ There are a number of default step definitions built into GreenHouse for common 
     <td>Save String</td>
     <td><code>Given I save {string} as {string}</code></td>
     <td><code>N/A</code></td>
-    <td>Given/And I save {string} as {string}</td>
+    <td>Saves a string as a variable</td>
   </tr>
   <tr>
     <td>Save Random String</td>
@@ -196,9 +196,9 @@ Handler functions can also accept variables from the Gherkin sentence, see below
 ```typescript
 import Step from '@Steps/Template'
 import { Given } from '@Steps/Keywords'
-import { Page } from 'playwright/test'
+import { type Page } from '@PickleDecs'
 
-const test = new Step(
+const OpenUrl = new Step(
     //Matching gherkin
     [
         Given('I open {string}')
@@ -210,7 +210,7 @@ const test = new Step(
     }
 )
 
-export default test
+export default OpenUrl
 ```
 The datatype to pass into the function is given between `{}`. Currently the following datatypes are accepted:
 ```
@@ -256,6 +256,29 @@ These are function that can be used within step definitions for commonly used ac
   </tr>
 </table>
 
+*Example usage*
+```typescript
+import Step from '@Step/Template'
+import { Given, And } from '@Step/Keywords'
+import { type Page } from '@PickleDecs'
+import Click from '@Actions/Click'
+
+const ClickElement = new Step(
+    //Matching gherkin
+    [
+        Given('I click {string}'),
+        And('I click {string}')
+    ],
+    
+    //Handler function
+    async (page: Page, selector: string) => {
+        await Click(page, selector)
+    }
+)
+
+export default ClickElement
+```
+
 **Directory Structure**<br>
 
 All typescript step definitions must be kept within the steps folder. See the below tree:
@@ -272,7 +295,7 @@ TestsFolder
 ```
 *Note:* The pickle-dev folder must be cloned in using the above structure, I will make a template to clone this in soon. The file `GreenHouse.js` contains config for the user to change. The files `PickleDecs.ts` and `tsconfig.json` are also in the test folder for compilation.<br>
 
-**Variables** can also be used within your tests to save info between steps. Here is a simple example:
+**Variables**<br> can also be used within your tests to save info between steps. Here is a simple example:
 ```
 Given I save 'Hello World!' as 'testVar'
 And I add log '$$testVar'
@@ -282,7 +305,7 @@ Within your step definitions variables are set using the Set action, like below:
 ```typescript
 import Step from '@Steps/Template'
 import { Given } from '@Steps/Keywords'
-import { Page } from 'playwright/test'
+import { type Page } from '@PickleDecs'
 import { Set } from '@Actions/VarControl'
 
 const Save = new Step(
@@ -299,9 +322,9 @@ const Save = new Step(
 
 export default Save
 ```
-Setting a variable requires the `page` object, as well as the variable name (key) as a `string`, and the variable content (string, int or bool, dependant on what the function is expecting as provided in the *matching gherkin*)<br><br>
+Setting a variable requires the `Page` object, as well as the variable name (key) as a `string`, and the variable content (string, int or bool, dependant on what the function is expecting as provided in the *matching gherkin*)<br><br>
 *Getting*<br>
-Variables can be accessed from within features using `$$` and from within step definitions using the `Get` action, as below:<br>
+Variables can be accessed from within features using `$$` and from within step definitions using the `Get` action, as below:<br><br>
 *Usage within `.feature` files:*
 ```
 And I add log '$$testVar'
@@ -310,7 +333,7 @@ And I add log '$$testVar'
 ```typescript
 import Step from '@Steps/Template'
 import { Then } from '@Steps/Keywords'
-import { Page } from 'playwright/test'
+import { type Page } from '@PickleDecs'
 import { Get } from '@Actions/VarControl'
 
 const LogVar = new Step(
@@ -330,15 +353,13 @@ export default LogVar
 
 ### Running Tests
 
-*To run tests you currently must be within the greenhouse directory, also make sure you install all the modules*
+*I am currently making a docker image but it is not near done*
 
-First build all the typescript: `npm run build`
-Then compile your Gherkin code into jest tests: `npm run compile <path-to-your-BDD-folder>`
-Then run your tests: `npm run tests`
+Currently you can run tests with:
 
-Optionally you can also run: `npm run reset <path-to-your-BDD-folder>` which basically just builds and compiles everything.
+`/path/to/gh-builder.sh /path/to/tests-folder`
 
-Also there a number of options that can be configured in `GreenHouse.js`, including things like headless mode and logging options.
+This will make a new image and run the tests in it, it will also save videos of the tests.
 
 ## What's next?
 
