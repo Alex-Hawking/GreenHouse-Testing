@@ -269,3 +269,5 @@ TODO:
 - [ ] caching of compiled files
 - [ ] user friendly error catching with compilation and running
 - [ ] implement cucumbers `Background` feature
+- [ ] better error handling
+- [ ] docker image opens window locally

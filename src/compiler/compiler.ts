@@ -5,14 +5,18 @@ import { Path } from '../types';
 import { template } from './template';
 import { createDirectory, copyFile, writeFile } from '../helper'; 
 
+// Interface to pair regular expressions with module import paths.
 interface RegexModulePair {
     regex: RegExp;
     importPath: string;
 }
 
+// Set to keep track of required imports.
 const reqImports = new Set<string>();
+// Map to store content of files.
 const fileContent = new Map<string, string>();
 
+// Function to compile a feature file.
 async function compileFeatureFile(filePath: string, precompiledRegex: RegexModulePair[], bdd: Path) {
     const importModules = new Map<string, string>();
     let name;
@@ -20,21 +24,25 @@ async function compileFeatureFile(filePath: string, precompiledRegex: RegexModul
     let tests = [];
     let importModuleCode = [];
 
+    // Creating a stream to read the file line by line.
     const fileStream = fs.createReadStream(filePath);
     const rl = readline.createInterface({ input: fileStream, crlfDelay: Infinity });
 
     for await (const line of rl) {
+        // Check if the line contains the feature name.
         const isName = line.match(/Feature: (.+)/);
         if (isName) {
             name = isName[1];
         }
 
+        // Check for matches with precompiled regular expressions.
         for (const { regex, importPath } of precompiledRegex) {
             const matches = line.match(regex);
             if (matches) {
                 const moduleName = path.parse(importPath).name;
                 importModules.set(moduleName, `../steps/${path.basename(importPath)}`);
                 reqImports.add(importPath);
+                // Processing imports and test code generation.
                 const modifiedImports = matches.slice(1).map(match =>
                     /\$\$(\w+)/g.test(match) ?
                         match.replace(/\$\$(\w+)/g, (_, word) => `page.variables.get("${word}")`) :
@@ -46,8 +54,10 @@ async function compileFeatureFile(filePath: string, precompiledRegex: RegexModul
         }
     }
 
+    // Generating import module code.
     importModuleCode = Array.from(importModules, ([name, path]) => `const ${name} = require('${path}');`);
 
+    // Storing the compiled file content.
     fileContent.set(`${fileName}.test.js`, template(`${bdd.origin}/GreenHouse`)
         .replace('#comment', `// Source file: ${filePath}`)
         .replace('#imports', importModuleCode.join('\n'))
@@ -56,12 +66,14 @@ async function compileFeatureFile(filePath: string, precompiledRegex: RegexModul
     );
 }
 
+// Function to extract action imports from a file.
 function extractActionImports(filePath: string): string[] {
     const content = fs.readFileSync(filePath, 'utf8');
     const importRegex = /require\(['"]([^'"]+\/actions\/[^'"]+)['"]\)/g;
     let match;
     let imports = [];
 
+    // Extracting imports from the file content.
     while ((match = importRegex.exec(content)) !== null) {
         if (match[1].includes('/actions/')) {
             imports.push(match[1]);
@@ -71,19 +83,24 @@ function extractActionImports(filePath: string): string[] {
     return imports;
 }
 
+// Main compile function to process feature files.
 async function compile(featuresDir: string, registry: Map<RegExp[], string>, bdd: Path) {
+    // Precompile regular expressions.
     const precompiledRegex = Array.from(registry.entries()).flatMap(([regexArray, importPath]) =>
         regexArray.map(regex => ({ regex: new RegExp(regex), importPath }))
     );
 
+    // Reading the feature directory.
     const entries = await fs.promises.readdir(featuresDir, { withFileTypes: true });
     const featureFiles = entries.filter(dirent => dirent.isFile()).map(dirent => dirent.name);
 
+    // Compiling each feature file.
     const compileTasks = featureFiles.map(file =>
         compileFeatureFile(path.join(featuresDir, file), precompiledRegex, bdd)
     );
     await Promise.all(compileTasks);
 
+    // Extracting and storing action imports.
     const actionImports = new Set<string>();
     for (const filePath of reqImports) {
         for (const importPath of extractActionImports(filePath)) {
@@ -91,7 +108,7 @@ async function compile(featuresDir: string, registry: Map<RegExp[], string>, bdd
         }
     }
 
-
+    // Creating necessary directories.
     const directories = [
         path.join(bdd.origin, "dist"),
         path.join(bdd.origin, "dist/bdd/features"),
@@ -101,7 +118,7 @@ async function compile(featuresDir: string, registry: Map<RegExp[], string>, bdd
     ];
     await Promise.all(directories.map(dir => createDirectory(dir)));
 
-
+    // Copying required files to the distribution directory.
     const copyTasks = [];
     copyTasks.push(copyFile(path.join(bdd.origin, ".temp/pickle-dev/step/Keywords.js"), path.join(bdd.origin, "dist/pickle-dev/step/Keywords.js")));
     copyTasks.push(copyFile(path.join(bdd.origin, ".temp/pickle-dev/step/Template.js"), path.join(bdd.origin, "dist/pickle-dev/step/Template.js")));
@@ -113,7 +130,7 @@ async function compile(featuresDir: string, registry: Map<RegExp[], string>, bdd
     });
     await Promise.all(copyTasks);
 
-    // Write files in parallel
+    // Writing compiled file contents to the destination directory.
     const writeTasks = Array.from(fileContent, ([name, content]) => writeFile(path.join(bdd.origin, "dist/bdd/features", name), content));
     await Promise.all(writeTasks);
 }
