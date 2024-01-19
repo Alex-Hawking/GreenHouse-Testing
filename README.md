@@ -26,7 +26,7 @@ Compiles to:
 `open_website.test.js`
 ```javascript
 // This file was compiled from Gherkin using GreenHouse🌱 (https://github.com/Alex-Hawking/GreenHouse/tree/main)
-// Source file: /Users/alexhawking/Desktop/Programming/greenhouse-useverb-webapp-tests/bdd/features/example.feature
+// Source file: ~/tests/bdd/features/example.feature
 
 const Open = require('../steps/Open.js');
 const Wait = require('../steps/Wait.js');
