@@ -1,1 +1,0 @@
-This is the stuff for parsing .gherkin files to .test.js files

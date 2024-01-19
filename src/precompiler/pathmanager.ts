@@ -5,105 +5,90 @@ import * as path from 'path';
 import { type Path } from '../types'
 
 
-const findAllTsFiles = async (rootDir: string, fileList: string[] = []) => {
-    const files = await fs.readdir(rootDir);
-    await Promise.all(files.map(async (file) => {
-        const fullPath = path.join(rootDir, file);
-        const stat = await fs.stat(fullPath);
-        if (stat.isDirectory()) {
-            await findAllTsFiles(fullPath, fileList);
-        } else if (fullPath.endsWith('.ts')) {
-            fileList.push(fullPath);
-        }
-    }));
-    return fileList;
-};
+function readTsConfig(tsConfigPath: string) {
+    const configFileText = fs.readFileSync(tsConfigPath).toString();
+    const result = ts.parseConfigFileTextToJson(tsConfigPath, configFileText);
 
+    if (result.error) {
+        throw new Error(`Error parsing tsconfig.json: ${result.error.messageText}`);
+    }
 
-const compileTs = async (rootDir: string, outDir: string) => {
-    try {
-        const tsFiles = await findAllTsFiles(rootDir);
-        const program = ts.createProgram(tsFiles, {
-            noEmitOnError: true,
-            noImplicitAny: true,
-            target: ts.ScriptTarget.ES5,
-            module: ts.ModuleKind.CommonJS,
-            outDir: outDir,
-            paths: {
-                "@Step/*": ["./dist/src/pickle/step/*"],
-                "@Actions/*": ["./dist/src/pickle/actions/*"]
-            }
-        });
+    const configObject = result.config;
+    const configParseResult = ts.parseJsonConfigFileContent(configObject, ts.sys, path.dirname(tsConfigPath));
 
-        const emitResult = program.emit();
+    if (configParseResult.errors.length > 0) {
+        throw new Error(`Error parsing tsconfig.json: ${configParseResult.errors.map(e => e.messageText).join(", ")}`);
+    }
 
-        if (emitResult.emitSkipped) {
-            console.error("TypeScript compilation failed.");
-            const allDiagnostics = ts
-                .getPreEmitDiagnostics(program)
-                .concat(emitResult.diagnostics);
+    return configParseResult;
+}
 
-                allDiagnostics.forEach(diagnostic => {
-                    const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
-                    if (diagnostic.file && diagnostic.start !== undefined) {
-                        const { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
-                        console.log(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
-                    } else {
-                        console.log(message);
-                    }
-                });
-                
+function compile(configParseResult: ts.ParsedCommandLine) {
+    const program = ts.createProgram(configParseResult.fileNames, configParseResult.options);
+    const emitResult = program.emit();
+
+    const allDiagnostics = ts.getPreEmitDiagnostics(program).concat(emitResult.diagnostics);
+
+    allDiagnostics.forEach(diagnostic => {
+        if (diagnostic.file) {
+            const { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start!);
+            const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
+            console.log(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
         } else {
+            console.log(ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'));
         }
-
-    } catch (error) {
-    }
+    });
 }
 
-const clone = async (src: string, dest: string) => {
-    try {        
-        await fs.copy(src, dest, {
-            overwrite: true,
-        });
-    } catch (err) {
-        console.error('An error occurred:', err);
-    }
-}
-
-const deleteDirectory = async (dir: string) => {
+async function replaceInFile(filePath: string, replacements: { [key: string]: string }) {
     try {
-        await fs.remove(dir);    
+        let data = await fs.readFile(filePath, 'utf8');
+
+        Object.keys(replacements).forEach(key => {
+            data = data.replace(new RegExp(key, 'g'), replacements[key]);
+        });
+
+        await fs.writeFile(filePath, data, 'utf8');
     } catch (err) {
-        console.error('Error removing directory:', err);
+        console.error(`Error modifying file ${filePath}: ${err}`);
+    }
+}
+async function processDirectory(directory: string, replacements: { [key: string]: string }) {
+    const files = await fs.readdir(directory);
+
+    for (const file of files) {
+        const filePath = path.join(directory, file);
+        const stat = await fs.stat(filePath);
+
+        if (stat.isDirectory()) {
+            await processDirectory(filePath, replacements);
+        } else if (path.extname(file) === '.js') {
+            await replaceInFile(filePath, replacements);
+        }
     }
 }
 
 const ManagePath = async (bdd: string): Promise<Path> => {
-    // Parallel clone processes
-    const cloneFeatures = clone(bdd + '/features', './dist/bdd/features')
-    const cloneSteps = clone(bdd + '/steps/', './.temp/steps')
-    await Promise.all([cloneFeatures, cloneSteps])
+    const tsConfigPath = path.join(bdd, 'tsconfig.json'); 
+    const configParseResult = readTsConfig(tsConfigPath);
+    compile(configParseResult);
 
-    await fs.promises.mkdir('./dist/bdd/steps', { recursive: true });
+    const tempDir = path.join(bdd, '.temp'); 
+    const replacements = {
+        "@Step": "../../pickle-dev/step",
+        "@Actions": "../../pickle-dev/actions",
+        "@PickleDecs": "../../PickleDecs.ts"
+    };
 
-    await compileTs(path.resolve(__dirname, '../../../src/pickle/defaults'), './dist/bdd/steps')
+    await processDirectory(tempDir, replacements);
 
-    await compileTs('./.temp/steps', './dist/bdd/steps')
-
-    // Parellel delete operations
-    const deleteTemp =  deleteDirectory('./.temp/')
-    const deleteJsFeatures =  deleteDirectory('./dist/bdd/features/js')
-    await Promise.all([deleteTemp, deleteJsFeatures])
-
-    await fs.promises.mkdir('./dist/bdd/features/js', { recursive: true });
     const returnPath: Path = {
         origin: bdd,
-        root: path.resolve('./dist/bdd/'),
-        features: path.resolve('./dist/bdd/features/'),
-        steps: path.resolve('./dist/bdd/steps/'),
+        features: path.join(bdd, 'bdd/features/'),
+        steps: path.join(bdd, '.temp/bdd/steps/'),
+        defaults: path.join(bdd, '.temp/pickle-dev/defaults/')
     }
 
     return returnPath
 }
-
 export default ManagePath
