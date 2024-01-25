@@ -1,5 +1,35 @@
 export const template = (globalPath: string) => { 
   const globals = require(globalPath)
+  const streamingTools: string = `beforeAll(async () => {
+    try {
+      browser = await chromium.launch({ headless: false, args:['--no-sandbox', '--disable-setuid-sandbox', '--display=:99']});
+      context = await browser.newContext({});
+      page = await context.newPage();
+      await page.setViewportSize({ width: 1280, height: 720 });
+      page.variables = new Map();
+    } catch (error) {
+      console.error('Error setting up the browser:', error);
+      throw error;
+    }
+  });
+  `
+  let beforeAll
+  if (globals.developerMode) {
+    beforeAll = streamingTools
+  } else {
+    beforeAll = `beforeAll(async () => {
+      try {
+        browser = await chromium.launch({ headless: true});
+        context = await browser.newContext({});
+        page = await context.newPage();
+        page.variables = new Map();
+      } catch (error) {
+        console.error('Error setting up the browser:', error);
+        throw error;
+      }
+    });
+    `
+  }
   return `// This file was compiled from Gherkin using GreenHouse🌱 (https://github.com/Alex-Hawking/GreenHouse/tree/main)
 #comment
 
@@ -7,21 +37,7 @@ export const template = (globalPath: string) => {
 const { chromium } = require('playwright');
 describe('#name', () => {
   let browser, context, page;
-  beforeAll(async () => {
-    try {
-      browser = await chromium.launch({ headless: false });
-      context = await browser.newContext({
-        recordVideo: {
-          dir: '/app/tests/videos'
-        }
-      });
-      page = await context.newPage();
-      page.variables = new Map();
-    } catch (error) {
-      console.error('Error setting up the browser:', error);
-      throw error;
-    }
-  });
+  ${beforeAll}
   afterAll(async () => {
     try {
       if (page) await page.close();

@@ -33,12 +33,10 @@ const registry: Map<RegExp[], string> = new Map();
         // Remove dist directory
         await removeDirectory(path.join(bddPath, "/dist"));
         console.log('Managing paths...')
-        console.log('Compiling TypesSript...')
         // Manages paths for the BDD project and stores the result in `bdd`.
-        const bdd: Path = await ManagePath(bddPath);
-        
+        const bdd: Path = await ManagePath(bddPath);        
         // Links step definitions in the BDD steps directory, updating the registry.
-        console.log('Linking steo definitions to registry...')
+        console.log('Linking step definitions to registry...')
         await Promise.all([Link(bdd.steps, registry), Link(bdd.defaults, registry)]);
         // Compiles the BDD feature files using the provided path and registry.
         console.log('Compiling features to JavaScript...')
@@ -66,6 +64,10 @@ const registry: Map<RegExp[], string> = new Map();
         '⠀⠀⠀⠀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n' +
         '\x1b[0m');
         console.log('\x1b[32m%s\x1b[0m', `Compilation successful (${timeDiff}s)`)
+        let env = require(`${bdd.origin}/GreenHouse`)
+        if (env.developerMode) {
+            console.log(`\nYou have compiled using \x1b[1mDEVELOPER MODE\x1b[0m, this means the tests have been compiled for use within the GreenHouse local testing environment\n`);
+        }
         console.log(`Compiled into \x1b[1m/dist/\x1b[0m within \x1b[1m${bdd.origin}\x1b[0m`);
 
     } catch (error) {

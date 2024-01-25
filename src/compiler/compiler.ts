@@ -21,14 +21,15 @@ async function compileFeatureFile(filePath: string, precompiledRegex: RegexModul
     const importModules = new Map<string, string>();
     let name;
     let fileName = path.parse(filePath).name;
-    let tests = [];
-    let importModuleCode = [];
+    let tests: string[] = [];
+    let importModuleCode: string[] = [];
 
     // Creating a stream to read the file line by line.
     const fileStream = fs.createReadStream(filePath);
     const rl = readline.createInterface({ input: fileStream, crlfDelay: Infinity });
 
-    for await (const line of rl) {
+    for await (let line of rl) {
+        line = line.replace(/"/g, '\\"')
         // Check if the line contains the feature name.
         const isName = line.match(/Feature: (.+)/);
         if (isName) {
@@ -71,7 +72,7 @@ function extractActionImports(filePath: string): string[] {
     const content = fs.readFileSync(filePath, 'utf8');
     const importRegex = /require\(['"]([^'"]+\/actions\/[^'"]+)['"]\)/g;
     let match;
-    let imports = [];
+    let imports: string[] = [];
 
     // Extracting imports from the file content.
     while ((match = importRegex.exec(content)) !== null) {
@@ -119,7 +120,7 @@ async function compile(featuresDir: string, registry: Map<RegExp[], string>, bdd
     await Promise.all(directories.map(dir => createDirectory(dir)));
 
     // Copying required files to the distribution directory.
-    const copyTasks = [];
+    const copyTasks: Promise<void>[] = [];
     copyTasks.push(copyFile(path.join(bdd.origin, ".temp/pickle-dev/step/Keywords.js"), path.join(bdd.origin, "dist/pickle-dev/step/Keywords.js")));
     copyTasks.push(copyFile(path.join(bdd.origin, ".temp/pickle-dev/step/Template.js"), path.join(bdd.origin, "dist/pickle-dev/step/Template.js")));
     reqImports.forEach(step => {

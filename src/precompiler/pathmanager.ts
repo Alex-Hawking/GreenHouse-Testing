@@ -100,6 +100,7 @@ const managePath = async (bdd: string): Promise<Path> => {
     // Read and parse the tsconfig file.
     const configParseResult = await readTsConfig(tsConfigPath);
     // Compile the TypeScript project.
+    console.log('Compiling TypesSript...')
     compile(configParseResult);
 
     // Define the directory to process and the replacements to apply.
