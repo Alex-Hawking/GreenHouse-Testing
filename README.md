@@ -355,11 +355,10 @@ export default LogVar
 
 *I am currently making a docker image but it is not near done*
 
-Currently you can run tests with:
+Currently there are a few way to run tests.
 
-`/path/to/gh-builder.sh /path/to/tests-folder`
+- Local testing (for development): [here](https://github.com/GreenHouseTesting/GreenHouse-Local-Testing)
 
-This will make a new image and run the tests in it, it will also save videos of the tests.
 
 ## What's next?
 
