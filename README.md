@@ -286,6 +286,7 @@ All typescript step definitions must be kept within the steps folder. See the be
 TestsFolder
 ├── GreenHouse.js
 ├── PickleDecs.ts
+├── alias.ts
 ├── bdd
 │   ├── features
 │   └── steps
