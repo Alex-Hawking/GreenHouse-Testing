@@ -2,12 +2,6 @@
 import fs from 'fs'
 import path from 'path'
 
-/**
- * Asynchronously processes a directory of files, registering step definitions.
- * 
- * @param dir The directory path containing step definition files.
- * @param registry A Map object to store regular expressions and corresponding file paths.
- */
 const Link = async (dir: string, registry: Map<RegExp[], string>) => {
     try {
         // Read the directory and get an array of filenames.
@@ -45,5 +39,4 @@ const Link = async (dir: string, registry: Map<RegExp[], string>) => {
     }
 };
 
-// Export the Link function as the default export of the module.
 export default Link;

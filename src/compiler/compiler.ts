@@ -24,6 +24,7 @@ async function compileFeatureFile(filePath: string, precompiledRegex: RegexModul
     let tests: string[] = [];
     let importModuleCode: string[] = [];
 
+
     // Creating a stream to read the file line by line.
     const fileStream = fs.createReadStream(filePath);
     const rl = readline.createInterface({ input: fileStream, crlfDelay: Infinity });
@@ -35,6 +36,7 @@ async function compileFeatureFile(filePath: string, precompiledRegex: RegexModul
         if (isName) {
             name = isName[1];
         }
+        importModules.set('alias', '../../alias.js')
 
         // Check for matches with precompiled regular expressions.
         for (const { regex, importPath } of precompiledRegex) {
@@ -44,11 +46,20 @@ async function compileFeatureFile(filePath: string, precompiledRegex: RegexModul
                 importModules.set(moduleName, `../steps/${path.basename(importPath)}`);
                 reqImports.add(importPath);
                 // Processing imports and test code generation.
-                const modifiedImports = matches.slice(1).map(match =>
-                    /\$\$(\w+)/g.test(match) ?
-                        match.replace(/\$\$(\w+)/g, (_, word) => `page.variables.get("${word}")`) :
-                        isNaN(parseFloat(match)) ? `"${match}"` : match
-                );
+                const modifiedImports = matches.slice(1).map(match => {
+                    // Check for variable within world.ts file
+                    if (/\$\$(\w+)/g.test(match)) {
+                        return match.replace(/\$\$(\w+)/g, (_, word) => `alias.default.${word}`);
+                    } 
+                    // Check for variable defined during function
+                    else if (/\$world(\w+)/g.test(match)) {
+                        return match.replace(/\$world.(\w+)/g, (_, word) => `page.variables.get("${word}")`);
+                    } 
+                    // Handle other cases
+                    else {
+                        return isNaN(parseFloat(match)) ? `"${match}"` : match;
+                    }
+                });
 
                 tests.push(`\ttest("${matches[0]}", async () => { await runStep( ${moduleName}.default.StepFunction, page, ${modifiedImports.join(', ')} ) });`);
             }
@@ -80,7 +91,6 @@ function extractActionImports(filePath: string): string[] {
             imports.push(match[1]);
         }
     }
-
     return imports;
 }
 
@@ -123,6 +133,7 @@ async function compile(featuresDir: string, registry: Map<RegExp[], string>, bdd
     const copyTasks: Promise<void>[] = [];
     copyTasks.push(copyFile(path.join(bdd.origin, ".temp/pickle-dev/step/Keywords.js"), path.join(bdd.origin, "dist/pickle-dev/step/Keywords.js")));
     copyTasks.push(copyFile(path.join(bdd.origin, ".temp/pickle-dev/step/Template.js"), path.join(bdd.origin, "dist/pickle-dev/step/Template.js")));
+    copyTasks.push(copyFile(path.join(bdd.origin, ".temp/alias.js"), path.join(bdd.origin, "dist/alias.js")));
     reqImports.forEach(step => {
         copyTasks.push(copyFile(step, path.join(bdd.origin, "dist/bdd/steps", path.basename(step))));
     });
