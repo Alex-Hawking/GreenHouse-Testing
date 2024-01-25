@@ -298,7 +298,7 @@ TestsFolder
 **Variables**<br> can also be used within your tests to save info between steps. Here is a simple example:
 ```
 Given I save 'Hello World!' as 'testVar'
-And I add log '$$testVar'
+And I add log '$world.testVar'
 ```
 *Setting*<br/>
 Within your step definitions variables are set using the Set action, like below:
@@ -324,7 +324,7 @@ export default Save
 ```
 Setting a variable requires the `Page` object, as well as the variable name (key) as a `string`, and the variable content (string, int or bool, dependant on what the function is expecting as provided in the *matching gherkin*)<br><br>
 *Getting*<br>
-Variables can be accessed from within features using `$$` and from within step definitions using the `Get` action, as below:<br><br>
+Variables can be accessed from within features using `$world` and from within step definitions using the `Get` action, as below:<br><br>
 *Usage within `.feature` files:*
 ```
 And I add log '$$testVar'
@@ -349,6 +349,31 @@ const LogVar = new Step(
 )
 
 export default LogVar
+```
+
+**Aliases**<br> can be used within your tests to for frequently accesses selectors. You can add them inside the alias.ts file. Here is a simple example:
+```typescript
+const alias = {
+    optionsButton: ".mdi-pencil",
+    options: {
+        reload: ".mdi-reload",
+        sun: ".mdi-white-balance-sunny",
+        settings: ".mdi-cog"
+    }
+}
+
+export default alias
+```
+They can then be access using `$$` like below:
+```
+Feature: Switch to sunny mode
+
+    Scenario:
+        Given I open 'https://www.alexhawking.dev'
+        Given I click '$$optionsButton'
+        Then I wait 2s
+        And I click '$$options.sun'
+        Then I wait 5s
 ```
 
 ### Running Tests
