@@ -21,6 +21,19 @@ if (bddPath == "" || !bddPath) {
     exit(1);
 }
 
+const cleanUpOnExit = async (bddPath: string, exitCode: number) => {
+    try {
+        // Perform cleanup
+        await removeDirectory(path.join(bddPath, "/.temp"));
+        console.log("Cleanup successful.");
+    } catch (error) {
+        console.error("Cleanup failed:", error);
+    } finally {
+        // Exit with provided exit code after cleanup
+        process.exit(exitCode);
+    }
+}
+
 
 // Initializes a map to store regular expressions and associated string paths.
 const registry: Map<RegExp[], string> = new Map();
@@ -29,6 +42,7 @@ const registry: Map<RegExp[], string> = new Map();
 (async () => {
     try {
         console.log('Starting compilation with \x1b[1mGreenHouse 0.0.1 \x1b[0m🌱');
+        console.log("\x1b[4m" + bddPath + "\x1b[0m\n")
         const startTime: any = new Date();
         // Remove dist directory
         await removeDirectory(path.join(bddPath, "/dist"));
@@ -69,9 +83,7 @@ const registry: Map<RegExp[], string> = new Map();
             console.log(`\nYou have compiled using \x1b[1mDEVELOPER MODE\x1b[0m, this means the tests have been compiled for use within the GreenHouse local testing environment\n`);
         }
         console.log(`Compiled into \x1b[1m/dist/\x1b[0m within \x1b[1m${bdd.origin}\x1b[0m`);
-
     } catch (error) {
-        // Logs any errors encountered during the BDD setup process.
-        console.error('Error processing files:', error);
+        await cleanUpOnExit(bddPath, 1);
     }
 })();

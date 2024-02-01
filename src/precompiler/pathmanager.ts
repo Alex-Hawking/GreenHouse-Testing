@@ -41,15 +41,24 @@ function compile(configParseResult: ts.ParsedCommandLine) {
     const allDiagnostics = ts.getPreEmitDiagnostics(program).concat(emitResult.diagnostics);
 
     // Logs all diagnostic messages.
+    let hasErrors = false;
     allDiagnostics.forEach(diagnostic => {
-        if (diagnostic.file) {
-            const { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start!);
-            const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
-            console.log(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
-        } else {
-            console.log(ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'));
+        const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
+        if (diagnostic.category === ts.DiagnosticCategory.Error) {
+            hasErrors = true; // Flag that there's at least one error
+            if (diagnostic.file) {
+                const { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start!);
+                console.log(`\x1b[31mError in ${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}\x1b[0m`);
+            } else {
+                console.log(`\x1b[31mError: ${message}\x1b[0m`);
+            }
         }
     });
+
+    if (hasErrors) {
+        console.log('\x1b[31mTypescript compilation failed with errors.\x1b[0m');
+        throw new Error('Typescript compilation failed with errors');
+    }
 }
 
 // Replaces text in a file based on a set of replacement rules.
@@ -107,8 +116,9 @@ const managePath = async (bdd: string): Promise<Path> => {
     const tempDir = path.join(bdd, '.temp'); 
     const replacements = {
         "@Step": "../../pickle-dev/step",
-        "@Actions": "../../pickle-dev/actions",
-        "@PickleDecs": "../../PickleDecs.ts"
+        "@Actions": "../../pickle-dev/actions/index",
+        "@PickleDecs": "../../PickleDecs.js",
+        "@Alias": "../../alias.js"
     };
 
     // Process the directory with the specified replacements.

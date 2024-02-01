@@ -8,6 +8,14 @@ export async function createDirectory(directoryPath: string) {
     }
 }
 
+export async function copyDirectory(sourcePath: string, destinationPath: string) {
+    try {
+        await fs.copy(sourcePath, destinationPath);
+    } catch (err) {
+        console.error(`Error copying directory: ${err}`);
+    }
+}
+
 export async function copyFile(sourcePath: string, destinationPath: string) {
     try {
         await fs.promises.copyFile(sourcePath, destinationPath);
