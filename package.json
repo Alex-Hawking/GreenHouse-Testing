@@ -1,6 +1,6 @@
 {
   "name": "greenhouse-testing",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "description": "",
   "main": "index.js",
   "bin": {
@@ -18,7 +18,8 @@
   "dependencies": {
     "jest": "^29.7.0",
     "playwright": "^1.40.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "fs-extra": "^11.2.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",

@@ -19,7 +19,7 @@ export const template = (globalPath: string) => {
   } else {
     beforeAll = `beforeAll(async () => {
       try {
-        browser = await chromium.launch({ headless: true});
+        browser = await chromium.launch({ headless: true });
         context = await browser.newContext({});
         page = await context.newPage();
         page.variables = new Map();
@@ -47,11 +47,12 @@ describe('#name', () => {
       console.error('Error closing the browser:', error);
     }
   });
-  const runStep = async (stepFunction, ...args) => {
+  const runStep = async (stepName, stepFunction, ...args) => {
     try {
       await stepFunction(...args);
     } catch (error) {
-      console.error('Error running step:', error);
+      console.log('Error running: ' + stepName)
+      console.error('Error:', error);
       throw error;
     }
   };

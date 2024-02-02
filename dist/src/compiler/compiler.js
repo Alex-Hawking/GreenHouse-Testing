@@ -79,7 +79,7 @@ function compileFeatureFile(filePath, precompiledRegex, bdd) {
                                     return /^\d+(\.\d+)?$/.test(match) ? match : `"${match}"`;
                                 }
                             });
-                            tests.push(`\ttest("${matches[0]}", async () => { await runStep( ${moduleName}.default.StepFunction, page, ${modifiedImports.join(', ')} ) });`);
+                            tests.push(`\ttest("${matches[0]}", async () => { await runStep( "${line}", ${moduleName}.default.StepFunction, page, ${modifiedImports.join(', ')} ) });`);
                             matched = true;
                             break;
                         }
