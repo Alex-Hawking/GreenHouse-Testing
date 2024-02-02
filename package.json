@@ -1,8 +1,11 @@
 {
-  "name": "pickled-threads-new",
+  "name": "greenhouse-testing",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "bin": {
+    "gh": "cli.js"
+  },
   "scripts": {
     "clean": "rimraf ./dist ./.temp",
     "compile": "node ./dist/src/index.js",
