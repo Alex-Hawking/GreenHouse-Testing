@@ -28,7 +28,7 @@ const registry: Map<RegExp[], string> = new Map();
 export const compile = async (bddPath: string) => {
     const fullPath = path.resolve(bddPath)
     try {
-        console.log('Starting compilation with \x1b[1mGreenHouse 0.0.1 \x1b[0m🌱');
+        console.log('Starting compilation with \x1b[1mGreenHouse 0.0.2 \x1b[0m🌱');
         console.log("\x1b[4m" + fullPath + "\x1b[0m\n")
         const startTime: any = new Date();
         // Remove dist directory
