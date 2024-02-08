@@ -1,5 +1,6 @@
 import * as fs from 'fs-extra';
 
+// Helper function for creating directories
 export async function createDirectory(directoryPath: string) {
     try {
         await fs.promises.mkdir(directoryPath, { recursive: true });
@@ -8,6 +9,7 @@ export async function createDirectory(directoryPath: string) {
     }
 }
 
+// Helper function for copying directories
 export async function copyDirectory(sourcePath: string, destinationPath: string) {
     try {
         await fs.copy(sourcePath, destinationPath);
@@ -16,6 +18,7 @@ export async function copyDirectory(sourcePath: string, destinationPath: string)
     }
 }
 
+// Helper function for copying files
 export async function copyFile(sourcePath: string, destinationPath: string) {
     try {
         await fs.promises.copyFile(sourcePath, destinationPath);
@@ -24,6 +27,7 @@ export async function copyFile(sourcePath: string, destinationPath: string) {
     }
 }
 
+// Helper function for writing files
 export async function writeFile(filePath: string, content: string) {
     try {
         await fs.promises.writeFile(filePath, content, 'utf8');
@@ -31,6 +35,8 @@ export async function writeFile(filePath: string, content: string) {
         console.error(`Error writing file: ${err}`);
     }
 }
+
+// Helper function for removing directories
 export async function removeDirectory(directoryPath: string) {
     try {
         await fs.remove(directoryPath);
