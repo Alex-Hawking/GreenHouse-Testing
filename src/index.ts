@@ -26,16 +26,15 @@ const registry: Map<RegExp[], string> = new Map();
 
 // Self-invoking async function to orchestrate the BDD setup process.
 export const compile = async (bddPath: string) => {
-    const fullPath = path.resolve(bddPath)
     try {
-        console.log('Starting compilation with \x1b[1mGreenHouse 0.0.2 \x1b[0m🌱');
-        console.log("\x1b[4m" + fullPath + "\x1b[0m\n")
+        console.log('Starting compilation with \x1b[1mGreenHouse 0.0.1 \x1b[0m🌱');
+        console.log("\x1b[4m" + bddPath + "\x1b[0m\n")
         const startTime: any = new Date();
         // Remove dist directory
-        await removeDirectory(path.join(fullPath, "/dist"));
+        await removeDirectory(path.join(bddPath, "/dist"));
         console.log('Managing paths...')
         // Manages paths for the BDD project and stores the result in `bdd`.
-        const bdd: Path = await ManagePath(fullPath);        
+        const bdd: Path = await ManagePath(bddPath);        
         // Links step definitions in the BDD steps directory, updating the registry.
         console.log('Linking step definitions to registry...')
         await Promise.all([Link(bdd.steps, registry), Link(bdd.defaults, registry)]);
@@ -43,7 +42,7 @@ export const compile = async (bddPath: string) => {
         // Compiles the BDD feature files using the provided path and registry.
         console.log('Compiling features to JavaScript...')
         await Compile(bdd.features, registry, bdd);
-        await fs.promises.writeFile(path.join(fullPath, '/dist/registry.json'), JSON.stringify(Object.fromEntries(registry)))
+        await fs.promises.writeFile(path.join(bddPath, '/dist/registry.json'), JSON.stringify(Object.fromEntries(registry)))
 
         // Remove temp directory
         console.log('Cleaning up...\n')
@@ -76,6 +75,6 @@ export const compile = async (bddPath: string) => {
         console.log(`Compiled into \x1b[1m/dist/\x1b[0m within \x1b[1m${bdd.origin}\x1b[0m`);
     } catch (error) {
         console.log(error)
-        await cleanUpOnExit(fullPath, 1);
+        await cleanUpOnExit(bddPath, 1);
     }
 }
