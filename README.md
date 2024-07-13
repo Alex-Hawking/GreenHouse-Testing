@@ -25,7 +25,7 @@ A Docker image is also being developed for running tests locally (in-browser) an
     ```bash
     sudo npm run build
     ```
-This should build and add GreenHouse to your command line (this is basically cheat/janky way to do this while I fix the project).
+This should build and add GreenHouse to your PATH (this is basically cheat/janky way to do this while I fix the project).
 
 ## Usage
 
