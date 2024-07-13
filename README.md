@@ -34,6 +34,8 @@ This should build and add GreenHouse to your PATH (this is basically cheat/janky
     ghc create /path/
     ```
 
+    (Note: this will clone the template folder into wherever you pass in)
+
 - Compile feature files:
     ```bash
     ghc compile /path/
