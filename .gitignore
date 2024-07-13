@@ -38,3 +38,4 @@ Thumbs.db
 
 # Build directories specific to your setup
 *.log
+dist/

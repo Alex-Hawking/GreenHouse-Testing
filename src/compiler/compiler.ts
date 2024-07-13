@@ -3,7 +3,7 @@ import path from 'path';
 import readline from 'readline';
 import { Path } from '../types';
 import { template } from './template';
-import { createDirectory, copyFile, writeFile, copyDirectory } from '../helper'; 
+import { createDirectory, copyFile, writeFile, copyDirectory } from '../helper';
 
 // Interface to pair regular expressions with module import paths.
 interface RegexModulePair {
@@ -24,7 +24,6 @@ async function compileFeatureFile(filePath: string, precompiledRegex: RegexModul
     let tests: string[] = [];
     let importModuleCode: string[] = [];
 
-
     // Creating a stream to read the file line by line.
     const fileStream = fs.createReadStream(filePath);
     const keywordRegex = /\b(When|Then|And|Given)\b/;
@@ -33,15 +32,15 @@ async function compileFeatureFile(filePath: string, precompiledRegex: RegexModul
 
     for await (let line of rl) {
         matched = false;
-        let originalLine = line
-        line = line.replace(/"/g, '\\"')
+        let originalLine = line;
+        line = line.replace(/"/g, '\\"');
         // Check if the line contains the feature name.
         const isName = line.match(/Feature: (.+)/);
         if (isName) {
             name = isName[1];
-            continue
+            continue;
         }
-        importModules.set('alias', '../../alias.js')
+        importModules.set('alias', '../../alias.js');
 
         if (keywordRegex.test(line)) {
             // Check for matches with precompiled regular expressions.
@@ -67,8 +66,8 @@ async function compileFeatureFile(filePath: string, precompiledRegex: RegexModul
                     });
 
                     tests.push(`\ttest("${matches[0]}", async () => { await runStep( "${line}", ${moduleName}.default.StepFunction, page, ${modifiedImports.join(', ')} ) });`);
-                    matched = true
-                    break
+                    matched = true;
+                    break;
                 }
             }
             if (!matched) {
@@ -90,6 +89,19 @@ async function compileFeatureFile(filePath: string, precompiledRegex: RegexModul
         .replace('#name', name || '')
         .replace('#tests', tests.join('\n'))
     );
+}
+
+// Function to create the Jest configuration file.
+async function createJestConfig(destinationPath: string, testMatch: string, testTimeout: string) {
+    const jestConfigContent = `module.exports = {
+    preset: 'jest-playwright-preset',
+    testEnvironment: 'jest-playwright-preset',
+    testMatch: ["${testMatch}"],
+    transform: {},
+    testTimeout: ${testTimeout}
+};`;
+    const jestConfigPath = path.join(destinationPath, 'jest.config.js');
+    await fs.promises.writeFile(jestConfigPath, jestConfigContent);
 }
 
 // Main compile function to process feature files.
@@ -135,6 +147,12 @@ async function compile(featuresDir: string, registry: Map<RegExp[], string>, bdd
     // Writing compiled file contents to the destination directory.
     const writeTasks = Array.from(fileContent, ([name, content]) => writeFile(path.join(bdd.origin, "dist/bdd/features", name), content));
     await Promise.all(writeTasks);
+
+    const globalPath = `${bdd.origin}/GreenHouse`
+    const globals = require(globalPath);
+
+    // Create the Jest config file in the dist directory.
+    await createJestConfig(path.join(bdd.origin, "dist"), globals.testMatch, globals.testTimeout);
 }
 
 export default compile;

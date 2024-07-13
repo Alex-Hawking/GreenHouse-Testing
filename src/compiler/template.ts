@@ -4,6 +4,7 @@ export const template = (globalPath: string) => {
     try {
       browser = await chromium.launch({ headless: false, args:['--no-sandbox', '--disable-setuid-sandbox', '--display=:99']});
       context = await browser.newContext({});
+      await context.grantPermissions(['clipboard-read', 'clipboard-write']);
       page = await context.newPage();
       await page.setViewportSize({ width: 1280, height: 720 });
       page.variables = new Map();
@@ -21,6 +22,7 @@ export const template = (globalPath: string) => {
       try {
         browser = await chromium.launch({ headless: true });
         context = await browser.newContext({});
+        await context.grantPermissions(['clipboard-read', 'clipboard-write']);
         page = await context.newPage();
         page.variables = new Map();
       } catch (error) {
